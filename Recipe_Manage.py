@@ -16,6 +16,10 @@ class Recipe_Manage():
         self.name = name
         self.category = category
         self.fname = fname
+        self.position = 0
+
+    def setPosition(self, position):
+        self.position = position
 
     def sendToFile(self, Recipe):
 
@@ -23,13 +27,12 @@ class Recipe_Manage():
         try:
             pickle_in = open("RecipeSaves.pickle", "rb")
             Recipe_List = pickle.load(pickle_in)
-            Recipe_List.insert(0, Recipe)
+            self.position = len(Recipe_List)
+            Recipe_List.append(Recipe)
             pickle_in.close()
-            print("went through try")
         except:
             Recipe_List = []
             Recipe_List.insert(0, Recipe)
-            print("went through except")
 
         # rewrites to file
         pickle_out = open("RecipeSaves.pickle", "wb")
@@ -40,24 +43,20 @@ class Recipe_Manage():
         try:
             global selectedRecipe
             selectedRecipe.append(recipe)
-            print('added to selected recipes')
         except:
             global selectedRecipe
             selectedRecipe = []
             selectedRecipe.append(recipe)
-            print('selected recipes created')
         return selectedRecipe
 
     def addingSelectedAmount(servings):
         try:
             global selectedAmount
             selectedAmount.append(servings)
-            print('added to selected amount')
         except:
             global selectedAmount
             selectedAmount = []
             selectedAmount.append(servings)
-            print('selected amount created')
         return selectedAmount
 
     def groceryStringGenerator(self):
@@ -74,27 +73,45 @@ class Recipe_Manage():
                     tempQuantity = selectedRecipe[i].getQuantity()
                     totalQuantity.append(tempQuantity[j] * (int(selectedAmount[i])/selectedRecipe[i].getNumPeople()))
                 totalTypes.append(selectedRecipe[i].getTypes())
+            # converting list of lists into list of strings
+            for i in range(0, len(totalTypes), 1):
+                totalTypes[i] = totalTypes[i][0]
+                totalUnits[i] = totalUnits[i][0]
             # simplifying lists by combining common items
-            for l in range(0, len(totalUnits), 1):
-                for k in range(l+1, len(totalUnits), 1):
+            print(totalQuantity)
+            print(totalUnits)
+            print(totalTypes)
+            l = -1
+            k = 0
+            while True:
+                l = l + 1
+                k = l + 1
+                length = len(totalTypes)
+                if l >= length-1:
+                    break 
+                while k != length:
                     if totalTypes[l] == totalTypes[k]:
                         if totalUnits[l] == totalUnits[k]:
                             quantNew = totalQuantity[l] + totalQuantity[k]
                             unitNew = ''.join(totalUnits[l])
                             typeNew = ''.join(totalTypes[l])
-                            del totalTypes[l]
-                            del totalTypes[k]
+                            del totalQuantity[l]
+                            del totalQuantity[k-1]
                             del totalUnits[l]
-                            del totalUnits[k]
+                            del totalUnits[k-1]
                             del totalTypes[l]
-                            del totalTypes[k]
+                            del totalTypes[k-1]
                             totalTypes.append(typeNew)
                             totalUnits.append(unitNew)
                             totalQuantity.append(quantNew)
+                            l = -1
+                            k = 0
+                            break
+                    k = k + 1
+
             # combining lists into a string
             for n in range(0, len(totalTypes), 1):
-                print(totalTypes[n])
-                print(str(totalQuantity[n]) + ' ' + totalUnits[n] + ' of ' + totalTypes[n] + '/n')
+                print(str(totalQuantity[n]) + ' ' + totalUnits[n] + ' of ' + totalTypes[n])
 
     # Return Functions-----------------------------------------------------------------
     def getDescription(self):
@@ -124,3 +141,13 @@ class Recipe_Manage():
     def getFname(self):
         return self.fname
 
+    def getPosition(self):
+        return self.position
+
+    def getSelectedRecipe():
+        global selectedRecipe
+        return(selectedRecipe)
+
+    def getSelectedAmount():
+        global selectedAmount
+        return(selectedAmount)

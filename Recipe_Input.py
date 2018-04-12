@@ -12,7 +12,7 @@ class Recipe_Input(QWidget):
         super().__init__()
 
         # adding components
-        self.nameLabel = QLabel("Name of Recipe:")
+        self.nameLabel = QLabel("Recipe Name:")
         self.name = QLineEdit()
         self.categoryLabel = QLabel("Category:")
         self.category = QComboBox()
@@ -22,7 +22,7 @@ class Recipe_Input(QWidget):
         self.typeLabel = QLabel("Type")
         self.DescriptionLabel = QLabel("Enter the recipe Instructions:")
         self.DescriptionEdit = QTextEdit()
-        self.example = QLabel("example:")
+        self.example = QLabel("ex:")
         self.quantityEx = QLabel("12")
         self.unitsEx = QLabel("Cups")
         self.typeEx = QLabel("Milk")
@@ -78,13 +78,14 @@ class Recipe_Input(QWidget):
 
         # Setting up GridLayout
         grid = QGridLayout()
-        grid.setColumnStretch(0, 1)
-        grid.setColumnStretch(1, 2)
-        grid.setColumnStretch(2, 2)
-        grid.setColumnStretch(3, 2)
-        grid.setColumnStretch(4, 1)
-        grid.setColumnStretch(5, 4)
-        grid.setColumnStretch(6, 4)
+        grid.setColumnStretch(0, 2)
+        grid.setColumnStretch(1, 8)
+        grid.setColumnStretch(2, 8)
+        grid.setColumnStretch(3, 8)
+        grid.setColumnStretch(4, 2)
+        grid.setColumnStretch(5, 8)
+        grid.setColumnStretch(6, 8)
+        grid.setColumnStretch(7, 2)
 
         # adding widgets to grid
         grid.addWidget(self.nameLabel, 0, 1)
@@ -161,8 +162,8 @@ class Recipe_Input(QWidget):
 
         # combining input into lists and variables
         Quantities = [self.quantity1.text(), self.quantity2.text(), self.quantity3.text(), self.quantity4.text(), self.quantity5.text(), self.quantity6.text(), self.quantity7.text(), self.quantity8.text(), self.quantity9.text(), self.quantity10.text()]
-        Units = [self.units1.text(), self.units2.text(), self.units3.text(), self.units4.text(), self.units5.text(), self.units6.text(), self.units7.text(), self.units8.text(), self.units9.text(), self.units10.text()]
-        Types = [self.type1.text(), self.type2.text(), self.type3.text(), self.type4.text(), self.type5.text(), self.type6.text(), self.type7.text(), self.type8.text(), self.type9.text(), self.type10.text()]
+        Units = [self.units1.text().lower(), self.units2.text(), self.units3.text(), self.units4.text(), self.units5.text(), self.units6.text(), self.units7.text(), self.units8.text(), self.units9.text(), self.units10.text()]
+        Types = [self.type1.text().lower(), self.type2.text(), self.type3.text(), self.type4.text(), self.type5.text(), self.type6.text(), self.type7.text(), self.type8.text(), self.type9.text(), self.type10.text()]
         NumPeople = self.amountSel.text()
         Description = self.DescriptionEdit.toPlainText()
         name = self.name.text()
@@ -191,6 +192,7 @@ class Recipe_Input(QWidget):
         # creating objects
             Recipe = Recipe_Manage(Quantities, Units, Types, NumPeople, Description, name, category, self.fname)
             Recipe.sendToFile(Recipe)
+            self.close()
 
 
     def selectFile(self):

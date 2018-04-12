@@ -3,6 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from Recipe_Manage import Recipe_Manage
 from UserGUI import UserGUI
+import pickle
 
 
 class Recipe_Tab_Template(QWidget):
@@ -19,6 +20,7 @@ class Recipe_Tab_Template(QWidget):
         self.fname = recipe.getFname()
         self.NumPeople = recipe.getNumPeople()
         self.name = recipe.getName()
+        self.position = recipe.getPosition()
 
         # adding components
         self.nameLabel = QLabel(self.name)
@@ -57,7 +59,6 @@ class Recipe_Tab_Template(QWidget):
         for i in range(0, len(self.units), 1):
             ingredientLines.append(" ")
             ingredientLines[i] = "- " + str(self.quantity[i]) + " " + self.units[i] + " of " + self.type[i]
-            print(ingredientLines[i])
         for i in range(0, len(ingredientLines), 1):
             self.ingredients.append(ingredientLines[i])
 
@@ -96,9 +97,19 @@ class Recipe_Tab_Template(QWidget):
         selectedRecipe = Recipe_Manage.addingSelectedRecipe(self.recipe)
         selectedAmount = Recipe_Manage.addingSelectedAmount(choiceNum)
         update = UserGUI()
-        update.refreshDockWidget(selectedRecipe, selectedAmount)
         self.selectBox.toggle()
 
-
     def delRecipe(self):
-        print('delete recipe')
+        # prompts user if they're sure if they want to delete
+        reply = QMessageBox.question(self, 'Are You Sure?', 'Are you sure you want to delete this recipe?', QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            print('Recipe was Deleted')
+            # Import objects from file and creates list
+            pickle_in = open("RecipeSaves.pickle", "rb")
+            Recipe_List = pickle.load(pickle_in)
+            del Recipe_List[self.position]
+            pickle_in.close()
+            # rewrites to file
+            pickle_out = open("RecipeSaves.pickle", "wb")
+            pickle.dump(Recipe_List, pickle_out)
+            pickle_out.close()

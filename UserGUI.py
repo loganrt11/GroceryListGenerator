@@ -15,7 +15,6 @@ class UserGUI(QMainWindow):
         # poorly placed variable declaration
         self.selectShow = QWidget()
         self.dockWidget = QDockWidget()
-        self.selectLabel = QLabel()
         self.addRecipe = QPushButton()
 
     # Main Window
@@ -27,15 +26,18 @@ class UserGUI(QMainWindow):
         self.addRecipe.clicked.connect(self.recipeInput.addRecipeUI)
         createList = QPushButton("Create List")
         createList.clicked.connect(Recipe_Manage.groceryStringGenerator)
+        self.refresh = QPushButton("Refresh", self)
+        self.refresh.clicked.connect(self.refreshDockWidget)
 
         # adding in tool bar
         toolBar = QToolBar()
         toolBar.addWidget(self.addRecipe)
         toolBar.addWidget(createList)
+        toolBar.addWidget(self.refresh)
 
         # adding in dock widget
         selectgrid = QGridLayout()
-        self.selectLabel = QLabel("Selected Recipes:")
+        self.selectLabel = QTextEdit("Selected Recipes:")
         self.selectLabel.setAlignment(Qt.AlignTop)
         selectgrid.addWidget(self.selectLabel, 0, 0)
         self.selectShow.setLayout(selectgrid)
@@ -56,7 +58,9 @@ class UserGUI(QMainWindow):
         grid = QGridLayout()
         from Recipe_Tab_Template import Recipe_Tab_Template
         for i in range(0, len(Recipe_List), 1):
+            Recipe_List[i].setPosition(i)
             grid.addWidget(Recipe_Tab_Template(Recipe_List[i]), i+1, 0 )
+
 
         # adding in scrollbar to central widget
         central_widget.setLayout(grid)
@@ -72,16 +76,15 @@ class UserGUI(QMainWindow):
         self.setUpdatesEnabled(True)
 
     # refreshing Dock widget to show selected recipes
-    def refreshDockWidget(self, selectedRecipe, selectedAmount):
-        self.selectLabel.setParent(None)
-        self.selectLabel.setText("this has been changed")
+    def refreshDockWidget(self):
+        selectedRecipe = Recipe_Manage.getSelectedRecipe()
+        selectedAmount = Recipe_Manage.getSelectedAmount()
+        for i in range(0, len(selectedRecipe), 1):
+            name = selectedRecipe[i].getName()
+            amount = selectedAmount[i]
+            self.selectLabel.append(name + ' for ' + str(amount) + ' people')
         self.selectLabel.update()
         self.selectLabel.repaint()
-        self.selectShow.update()
-        self.selectShow.repaint()
-        self.dockWidget.repaint()
-        self.dockWidget.update()
-        QApplication.processEvents()
 
 
 # main execution
